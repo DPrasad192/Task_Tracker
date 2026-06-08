@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, KeyRound, Copy, Check, RefreshCw } from "lucide-react";
+import { ArrowLeft, KeyRound, RefreshCw } from "lucide-react";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
@@ -9,8 +9,7 @@ export default function ForgotPasswordPage() {
   const [emailError, setEmailError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [resetLink, setResetLink] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,22 +39,12 @@ export default function ForgotPasswordPage() {
       if (!res.ok) {
         setError(data.error || "Something went wrong. Please try again.");
       } else {
-        setResetLink(data.resetLink);
+        setSubmitted(true);
       }
     } catch {
       setError("Unable to connect. Please check your connection and try again.");
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(resetLink);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* fallback: do nothing */
     }
   };
 
@@ -80,7 +69,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-text-base">Forgot Password?</h2>
             <p className="text-sm text-text-muted font-medium">
-              Enter your email and we'll generate a secure reset link.
+              Enter your email and we'll send you a reset link.
             </p>
           </div>
 
@@ -90,44 +79,18 @@ export default function ForgotPasswordPage() {
             </div>
           )}
 
-          {resetLink ? (
+          {submitted ? (
             <div className="flex flex-col gap-4">
               <div className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-2xl flex flex-col gap-2">
-                <p className="text-xs font-bold text-green-700 dark:text-green-400">Reset link generated!</p>
+                <p className="text-xs font-bold text-green-700 dark:text-green-400">Check your email</p>
                 <p className="text-xs text-text-muted font-medium leading-relaxed">
-                  Your reset link is ready. Click it below to set a new password. It expires in <strong>1 hour</strong>.
+                  If <strong>{email}</strong> is registered, you'll receive a password reset link shortly. The link expires in <strong>1 hour</strong>.
                 </p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 p-3 bg-bg-muted border border-border-base rounded-2xl">
-                  <a
-                    href={resetLink}
-                    className="flex-1 text-xs text-indigo-500 font-semibold truncate hover:underline"
-                  >
-                    {resetLink}
-                  </a>
-                  <button
-                    type="button"
-                    onClick={handleCopy}
-                    className="shrink-0 p-1.5 rounded-lg hover:bg-border-base transition-colors cursor-pointer text-text-muted hover:text-text-base"
-                    title="Copy link"
-                  >
-                    {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
-                  </button>
-                </div>
-                <a
-                  href={resetLink}
-                  className="w-full py-3.5 bg-btn-primary text-text-primary rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all duration-150 shadow-md text-sm"
-                >
-                  Open Reset Link
-                  <KeyRound className="w-4 h-4" />
-                </a>
               </div>
 
               <button
                 type="button"
-                onClick={() => { setResetLink(""); setEmail(""); setCopied(false); }}
+                onClick={() => { setSubmitted(false); setEmail(""); }}
                 className="text-xs text-text-muted hover:text-text-base flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <RefreshCw className="w-3 h-3" />
@@ -160,7 +123,7 @@ export default function ForgotPasswordPage() {
                 disabled={submitting}
                 className="mt-2 w-full py-3.5 bg-btn-primary text-text-primary rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 transition-all duration-150 shadow-md cursor-pointer"
               >
-                {submitting ? "Generating Link..." : "Generate Reset Link"}
+                {submitting ? "Sending..." : "Send Reset Link"}
                 <KeyRound className="w-4 h-4" />
               </button>
             </form>

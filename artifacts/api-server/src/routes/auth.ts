@@ -196,8 +196,9 @@ router.post("/auth/forgot-password", async (req, res): Promise<void> => {
       : `http://localhost:${process.env["PORT"] ?? 8080}`;
 
     const resetLink = `${baseUrl}/reset-password?token=${token}`;
+    req.log.info({ userId: user.id, resetLink }, "Password reset link generated (server-side only)");
 
-    res.json({ message: "Reset link generated.", resetLink });
+    res.json({ message: "If that email is registered, a reset link has been sent." });
   } catch (error) {
     req.log.error({ error }, "Forgot password error");
     res.status(500).json({ error: "Internal server error" });
