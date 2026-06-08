@@ -2,27 +2,38 @@ import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/context/AuthContext";
+import Navigation from "@/components/Navigation";
+import LandingPage from "@/pages/LandingPage";
+import LoginPage from "@/pages/LoginPage";
+import SignupPage from "@/pages/SignupPage";
+import TrackerPage from "@/pages/TrackerPage";
+import DashboardPage from "@/pages/DashboardPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
-function Home() {
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Replit Agent is building...</h1>
-        <p className="mt-2 text-sm text-gray-600">Your app will appear here once it's ready.</p>
-      </div>
-    </div>
-  );
-}
-
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route component={NotFound} />
-    </Switch>
+    <AuthProvider>
+      <div className="flex flex-col md:flex-row min-h-screen w-full">
+        <Navigation />
+        <main className="flex-1 flex flex-col min-w-0 pb-20 md:pb-0">
+          <Switch>
+            <Route path="/" component={LandingPage} />
+            <Route path="/login" component={LoginPage} />
+            <Route path="/signup" component={SignupPage} />
+            <Route path="/tracker" component={TrackerPage} />
+            <Route path="/dashboard" component={DashboardPage} />
+            <Route path="/forgot-password" component={ForgotPasswordPage} />
+            <Route path="/reset-password" component={ResetPasswordPage} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+      </div>
+    </AuthProvider>
   );
 }
 
