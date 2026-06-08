@@ -1,0 +1,15 @@
+kind = "web"
+previewPath = "/migration-backup-task-tracker"
+title = "Task Tracker (backup)"
+version = "1.0.0"
+id = "migration-backup-task-tracker"
+router = "path"
+
+[[services]]
+name = "web"
+paths = ["/migration-backup-task-tracker"]
+localPort = 26124
+
+[services.env]
+PORT = "26124"
+BASE_PATH = "/migration-backup-task-tracker"
